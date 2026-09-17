@@ -38,7 +38,7 @@ namespace EarthdataAuthSetupDotNet
         public static Options Parse(string[] args)
         {
             var options = new Options();
-            options.TargetDir = Directory.GetCurrentDirectory();
+            options.TargetDir = EarthdataAuthSetup.GetDefaultTargetDir();
             options.Username = Environment.GetEnvironmentVariable("EARTHDATA_USERNAME");
             options.Password = Environment.GetEnvironmentVariable("EARTHDATA_PASSWORD");
 
@@ -111,10 +111,15 @@ namespace EarthdataAuthSetupDotNet
         public const string EarthdataLoginUrl = "https://urs.earthdata.nasa.gov/";
         public const string EarthdataTokenUrl = "https://urs.earthdata.nasa.gov/api/users/find_or_create_token";
 
+        public static string GetDefaultTargetDir()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
+
         public static AuthPaths GetAuthPaths(string targetDir)
         {
             string baseDir = string.IsNullOrWhiteSpace(targetDir)
-                ? Directory.GetCurrentDirectory()
+                ? GetDefaultTargetDir()
                 : Path.GetFullPath(targetDir);
 
             return new AuthPaths
@@ -432,6 +437,8 @@ namespace EarthdataAuthSetupDotNet
             Console.WriteLine("EarthdataAuthSetupDotNet");
             Console.WriteLine();
             Console.WriteLine("Creates .urs_cookies, .dodsrc, .netrc, and .edl_token for Earthdata API access.");
+            Console.WriteLine();
+            Console.WriteLine("Default target directory: " + GetDefaultTargetDir());
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine("  --target-dir <path>        Directory where auth files should be created.");
